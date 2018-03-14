@@ -1,0 +1,44 @@
+{
+  "packages": [
+    {
+      "name": "KBV02",
+      "maintainer": "TK",
+      "websiteURL": "https://bitbucket.org/kbros/kbv02_custom_board_arduino.git",
+      "email": "test@siol.net",
+      "help": {
+        "online": "test@siol.net"
+      },
+      "platforms": [
+        {
+          "name": "KBV02",
+          "architecture": "avr",
+          "version": "1.0.0",
+          "category": "Contributed",
+          "help": {
+            "online": "test@siol.net"
+          },
+          "url": "hhttps://www.dropbox.com/sh/4mvjd3vlgk5lshp/AACIJjr4TywOgoWuMuXFhaefa?dl=0/KBV02_1.0.0.ZIP",
+          "archiveFileName": "KBV02_1.0.0.ZIP",
+          "checksum": "SHA-256:0cac0c986623cf1fad5282211d9e1e4863da4d94a1dcd6ed8cedc8359ec2620a",
+          "size": "153685",
+          "boards": [
+            {"name": "KBV02"}
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "arduino",
+              "name": "avr-gcc",
+              "version": "4.8.1-arduino5"
+            },
+            {
+              "packager": "arduino",
+              "name": "avrdude",
+              "version": "6.0.1-arduino5"
+            }
+          ]
+        }
+      ],
+      "tools":[]
+    }
+  ]
+}
