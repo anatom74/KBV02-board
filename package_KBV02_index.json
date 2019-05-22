@@ -3,19 +3,17 @@
     {
       "name": "KBV02",
       "maintainer": "TK",
-      "websiteURL": "https://bitbucket.org/kbros/kbv02_custom_board_arduino",
+      "websiteURL": "https://github.com/anatom74/KBV02-board",
       "email": "test@siol.net",
-      "help": {
-        "online": "test@siol.net"
-      },
+      
       "platforms": [
         {
           "name": "KBV02",
           "architecture": "avr",
-          "version": "1.1.0",
+          "version": "1.0.0",
           "category": "Contributed",
           "help": {
-            "online": "test@siol.net"
+            "online": "https://github.com/anatom74/KBV02-board"
           },
           "url": "https://github.com/anatom74/KBV02-board/master/KBV02_1.0.0.ZIP",
           "archiveFileName": "KBV02_1.0.0.ZIP",
