@@ -23,6 +23,23 @@
             {"name": "KBV02"}
           ],
           "toolsDependencies": []
+        },
+		 {
+          "name": "KBV02",
+          "architecture": "avr",
+          "version": "1.0.1",
+          "category": "Contributed",
+          "help": {
+            "online": "https://github.com/anatom74/KBV02-board"
+          },
+          "url": "https://anatom74.github.io/KBV02_1.0.1.zip",
+          "archiveFileName": "KBV02_1.0.1.zip",
+          "checksum": "SHA-256:fed2bf9e98624b4ccf7ea8c481883f73890c5f31871db1bda5e03dd0c0390c7f",
+          "size": "154734",
+          "boards": [
+            {"name": "KBV02"}
+          ],
+          "toolsDependencies": []
         }
       ],
       "tools":[]
