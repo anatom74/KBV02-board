@@ -1,0 +1,52 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+menu.cpu=Processor
+
+##############################################################
+
+
+KBV2.name=KBV02
+KBV2.vid.0=0x2341
+KBV2.vid.1=0x2341
+KBV2.vid.2=0x2A03
+KBV2.vid.3=0x2A03
+KBV2.vid.4=0x2341
+KBV2.vid.5=0x2341
+KBV2.pid.0=0x0010
+
+KBV2.upload.tool=avrdude
+KBV2.upload.maximum_data_size=8192
+
+KBV2.bootloader.tool=avrdude
+KBV2.bootloader.low_fuses=0xFF
+KBV2.bootloader.unlock_bits=0x3F
+KBV2.bootloader.lock_bits=0x0F
+
+KBV2.build.f_cpu=7372800L
+KBV2.build.core=arduino:arduino
+KBV2.build.variant=KBV02
+KBV2.build.board=KBV02
+
+# KBV02 w/ ATmega2560
+# -------------------------
+KBV2.menu.cpu.atmega2560=ATmega2560 (Mega 2560)
+KBV2.menu.cpu.atmega2560.build.mcu=atmega2560
+KBV2.menu.cpu.atmega2560.build.board=AVR_MEGA2560
+KBV2.menu.cpu.atmega2560.upload.protocol=wiring
+KBV2.menu.cpu.atmega2560.upload.maximum_size=253952
+KBV2.menu.cpu.atmega2560.upload.speed=115200
+KBV2.menu.cpu.atmega2560.bootloader.high_fuses=0xD8
+KBV2.menu.cpu.atmega2560.bootloader.extended_fuses=0xFD
+KBV2.menu.cpu.atmega2560.bootloader.file=optiboot/optiboot_atmega1280.hex
+
+# KBV02 w/ ATmega1280
+# -------------------------
+KBV2.menu.cpu.atmega1280=ATmega1280
+KBV2.menu.cpu.atmega1280.build.mcu=atmega1280
+KBV2.menu.cpu.atmega1280.build.board=AVR_MEGA
+KBV2.menu.cpu.atmega1280.upload.protocol=arduino
+KBV2.menu.cpu.atmega1280.upload.maximum_size=126976
+KBV2.menu.cpu.atmega1280.upload.speed=57600
+KBV2.menu.cpu.atmega1280.bootloader.high_fuses=0xDA
+KBV2.menu.cpu.atmega1280.bootloader.extended_fuses=0xF5
+KBV2.menu.cpu.atmega1280.bootloader.file=optiboot/optiboot_atmega1280.hex

@@ -1,0 +1,120 @@
+#!/usr/bin/perl
+
+# list optiboot hex files with size, version, features and name
+#
+# published under GNU General Public License, version 3 (GPL-3.0)
+# author Stefan Rueger
+#
+# v 1.03
+# 16.07.2016
+# 
+
+use strict;
+use warnings;
+use File::Basename;
+use File::HomeDir;
+use Getopt::Long qw(GetOptions);
+
+my $prognam = basename($0);
+my $myvers = "1.03";
+my $Usage = <<"END_USAGE";
+Syntax: $prognam {<boot>.hex}
+Function: list optiboot hex files with size, version, features and name
+Options:
+  -version  print version ($myvers) and exit
+  -check    check rjmp op code at end (if pgm_page_write-enabled and .lst file there)
+END_USAGE
+
+my ($version, $check, $in, $disthex, $vers, $distelf, $addrhex, $addrlst);
+
+GetOptions(
+  'version' => \$version,
+  'check' => \$check,
+) or die $Usage;
+
+print("$prognam version $myvers\n"), exit(0) if $version;
+
+use constant {
+  O_PGMWRITEPAGE   => 128, # pgm_write_page() support in optiboot
+  O_EEPROM         =>  64, # eeprom r/w support
+  O_DUALMASK       =>  48, # two bits for dual boot
+  O_DUALSEREST     =>  48, # dual boot with sector erase after programming and SPI lines restored after booting
+  O_DUALSE         =>  32, # dual boot with sector erase and SPI I/O lines not restored after booting
+  O_DUAL           =>  16, # dual boot (no external sector erase, SPI I/O lines initialised for SPI, but SPI switched off)
+  O_VBPMASK        =>  12, # two bits for VBP
+  O_VBPPATCHVERIFY =>  12, # VBP: patches reset vector/save vector and and pretends original vectors on verify
+  O_VBPPATCH       =>   8, # VBP: patches reset vector and stores application start in save vector: no verify support
+  O_VBP            =>   4, # VBP: jump to saved vector to start the application not to reset: vectors must be patched before upload
+  O_PROTECTME      =>   2, # boot section code safeguards against overwriting itself
+  O_RESETFLAGS     =>   1, # load reset flags into register R2 before jumping to the application
+};
+
+# default to all *.hex files if no argument given
+@ARGV = <*.hex> if !@ARGV;
+
+my ($checked, $checkedok) = (0, 0);
+
+foreach my $fname (@ARGV) {
+  next if $fname !~ /\.hex$/;
+
+  my $size = `avr-size $fname | cut -f2 | tail -1`;
+  chomp $size;
+
+  open($in, $fname) or die "$prognam: cannot open $fname";
+  while(<$in>) {
+    if(/^:04..FC/) {
+      $vers    = hex(substr($_,15,2).substr($_,13,2));
+      $disthex = hex(substr($_,12,1).substr($_,9,2));
+      $addrhex = hex(substr($_,3,4)) + 2+2*($disthex-4096);
+      last;
+    } elsif(/^:02..FE/) {
+      $vers    =  hex(substr($_,11,2).substr($_,9,2));
+    }
+  }
+  close $in;
+
+  print "$size ";
+  if($vers == 0xffff || $vers < 4*256+1) { # WestfW put the version number in binary from V4.1
+    print(" 0.0 ......");
+  } elsif(int($vers/256) >= 7*8+2) { # from version 7.2 onwards a byte-packed version no
+    printf("%2d.%d ", int($vers/(8*256)), ($vers/256)&7);
+    print($vers & O_PGMWRITEPAGE? 'w': '-');
+    print($vers & O_EEPROM? 'e': '-');
+    my $flags = ($vers/O_DUAL) & 3;
+    print($flags >= 2? 'D': $flags? 'd': '-'); # D = Dual boot with SE, d = dual boot no SE
+    $flags = ($vers/O_VBP) & 3;
+    print($flags==3? 'V': $flags==2? 'v': $flags? 'b': '-');
+    print($vers & O_PROTECTME? 'p': '-');
+    print($vers & O_RESETFLAGS? 'r': '-');
+  } else {
+    printf("%2d.%d %c......", int($vers/256), $vers & 0xff);
+  }
+  printf(" $fname\n");
+
+  # check .lst file for pgm_write_page symbol
+  if($check && defined($addrhex)) {
+    $fname =~ s/.hex$/.lst/;
+    if(open($in, $fname)) {
+      while(<$in>) {
+        chomp;
+        if(/<pgm_write_page/) {
+          $addrlst = hex(substr($_,4,4));
+          last;
+        }
+      }
+      close $in;
+      if(defined($addrlst)) {
+        printf "warning rjmp inconsistency c%03x: addr %04x (hex) vs %04x (lst) $fname\n", $disthex, $addrhex, $addrlst 
+          if $addrhex != $addrlst;
+        $checked++;
+        $checkedok++ if $addrhex == $addrlst;
+      }
+    }
+  }
+}
+
+print $checked != $checkedok? "$prognam: rjmp pgm_write_page() inconsistencies; you need to run make/makeall once more?\n": 
+  "$prognam: rjmp pgm_write_page() entries in $checked bootloaders look good\n" 
+  if $check && $checked;
+
+exit($checked != $checkedok);
